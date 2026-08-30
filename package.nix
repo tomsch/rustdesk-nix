@@ -36,11 +36,11 @@
 
 stdenv.mkDerivation rec {
   pname = "rustdesk";
-  version = "1.4.6";
+  version = "1.4.9";
 
   src = fetchurl {
     url = "https://github.com/rustdesk/rustdesk/releases/download/${version}/rustdesk-${version}-x86_64.deb";
-    hash = "sha256-DaRtenslIoLe1TI/dDGaEMH6cnEAHTspez3vQVyMjwQ=";
+    hash = "sha256-ckS6R8QOgEFyBEv75llGfFTORlVMmOeMjAQG8dYS/aM=";
   };
 
   nativeBuildInputs = [
