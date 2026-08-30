@@ -17,7 +17,8 @@
   xdotool,
   libappindicator-gtk3,
   libepoxy,
-  xorg,
+  libxdamage,
+  libxcomposite,
   libpulseaudio,
   alsa-lib,
   libva,
@@ -29,6 +30,8 @@
   libXext,
   libXfixes,
   libXtst,
+  gst_all_1,
+  pam,
 }:
 
 stdenv.mkDerivation rec {
@@ -59,8 +62,8 @@ stdenv.mkDerivation rec {
     xdotool
     libappindicator-gtk3
     libepoxy
-    xorg.libXdamage
-    xorg.libXcomposite
+    libxdamage
+    libxcomposite
     libpulseaudio
     alsa-lib
     libva
@@ -72,6 +75,9 @@ stdenv.mkDerivation rec {
     libXext
     libXfixes
     libXtst
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
+    pam
     stdenv.cc.cc.lib
   ];
 
@@ -101,16 +107,25 @@ stdenv.mkDerivation rec {
 
     # Desktop-Datei anpassen
     substituteInPlace $out/share/applications/rustdesk.desktop \
-      --replace-fail "Exec=rustdesk" "Exec=$out/bin/rustdesk" \
-      --replace-fail "/usr/share/icons" "$out/share/icons"
+      --replace-fail "Exec=rustdesk" "Exec=$out/bin/rustdesk"
 
     runHook postInstall
+  '';
+
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+
+    $out/bin/rustdesk --version | grep -Fx "${version}"
+
+    runHook postInstallCheck
   '';
 
   meta = {
     description = "Open-source remote desktop client (TeamViewer alternative)";
     homepage = "https://rustdesk.com";
     license = lib.licenses.agpl3Only;
+    sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
     platforms = [ "x86_64-linux" ];
     mainProgram = "rustdesk";
   };
